@@ -3,9 +3,6 @@ const passport = require('passport');
 const cors = require('cors');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
-const RedisStore = require('connect-redis')(session);
-const redisClient = require('redis').createClient();
-
 require('dotenv').config();
 
 const app = express();
@@ -23,16 +20,14 @@ app.use(cors({
     credentials: true,
 }));
 // Configuración de sesión
-
 app.use(session({
-    store: new RedisStore({ client: redisClient }), // Almacena las sesiones en Redis
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
-        secure: false,
-        sameSite: 'none',
+        secure: false, // Cambia a `true` si estás usando HTTPS
+        sameSite: 'none', // Permite que las cookies se envíen en solicitudes entre dominios
         domain: 'load-balancer-login-1066750330.us-east-1.elb.amazonaws.com',
         maxAge: 1000 * 60 * 60 * 24,
     },
@@ -84,7 +79,6 @@ app.get('/', (req, res) => {
         res.send('No estás autenticado.');
     }
 });
-
 // Inicia el servidor
 const PORT = process.env.PORT || 1028;
 app.listen(PORT, () => {
