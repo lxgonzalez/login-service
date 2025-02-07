@@ -47,7 +47,7 @@ app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
         // Redirige al usuario a la página de inicio o dashboard
-        res.redirect('/');
+        res.redirect('http://localhost:5173');
     });
 
 // Ruta de inicio
