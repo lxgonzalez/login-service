@@ -3,6 +3,10 @@ const passport = require('passport');
 const cors = require('cors');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
+const session = require('express-session');
+const RedisStore = require('connect-redis')(session);
+const redisClient = require('redis').createClient();
+
 require('dotenv').config();
 
 const app = express();
@@ -20,17 +24,20 @@ app.use(cors({
     credentials: true,
 }));
 // Configuración de sesión
+
 app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      httpOnly: true,
-      secure: false, // Cambia a `true` si estás usando HTTPS
-      sameSite: 'none', // Permite que las cookies se envíen en solicitudes entre dominios
-      domain: '.us-east-1.elb.amazonaws.com', // Dominio del backend
-    },
-  }));
+  store: new RedisStore({ client: redisClient }), // Almacena las sesiones en Redis
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'none',
+    domain: 'load-balancer-login-1066750330.us-east-1.elb.amazonaws.com',
+    maxAge: 1000 * 60 * 60 * 24,
+  },
+}));
 
 // Inicializa Passport
 app.use(passport.initialize());
@@ -65,14 +72,19 @@ app.get('/auth/google',
 app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
-        // Redirige al usuario a la página de inicio o dashboard
-        res.redirect('http://eternalgraphicsgroup25.s3-website-us-east-1.amazonaws.com');
+      console.log('Usuario autenticado:', req.user); // Verifica el usuario autenticado
+      req.session.user = req.user;
+      res.redirect('http://eternalgraphicsgroup25.s3-website-us-east-1.amazonaws.com');
     });
-
-// Ruta de inicio
-app.get('/', (req, res) => {
-    res.send(req.user ? `Bienvenido, ${req.user.displayName}!` : 'No estás autenticado.');
-});
+  
+  app.get('/', (req, res) => {
+    console.log('Sesión:', req.session); // Verifica la sesión
+    if (req.session.user) {
+      res.send(`Bienvenido, ${req.session.user.displayName}!`);
+    } else {
+      res.send('No estás autenticado.');
+    }
+  });
 
 // Inicia el servidor
 const PORT = process.env.PORT || 1028;
