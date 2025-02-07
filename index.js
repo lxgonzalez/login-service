@@ -24,7 +24,13 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-}));
+    cookie: {
+      httpOnly: true,
+      secure: false, // Cambia a `true` si estás usando HTTPS
+      sameSite: 'none', // Permite que las cookies se envíen en solicitudes entre dominios
+      domain: '.amazonaws.com', // Cambia esto por tu dominio (por ejemplo, '.example.com')
+    },
+  }));
 
 // Inicializa Passport
 app.use(passport.initialize());
