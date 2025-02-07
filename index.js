@@ -3,7 +3,6 @@ const passport = require('passport');
 const cors = require('cors');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
-const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 const redisClient = require('redis').createClient();
 
@@ -26,17 +25,17 @@ app.use(cors({
 // Configuración de sesión
 
 app.use(session({
-  store: new RedisStore({ client: redisClient }), // Almacena las sesiones en Redis
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    httpOnly: true,
-    secure: false,
-    sameSite: 'none',
-    domain: 'load-balancer-login-1066750330.us-east-1.elb.amazonaws.com',
-    maxAge: 1000 * 60 * 60 * 24,
-  },
+    store: new RedisStore({ client: redisClient }), // Almacena las sesiones en Redis
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'none',
+        domain: 'load-balancer-login-1066750330.us-east-1.elb.amazonaws.com',
+        maxAge: 1000 * 60 * 60 * 24,
+    },
 }));
 
 // Inicializa Passport
@@ -72,19 +71,19 @@ app.get('/auth/google',
 app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
-      console.log('Usuario autenticado:', req.user); // Verifica el usuario autenticado
-      req.session.user = req.user;
-      res.redirect('http://eternalgraphicsgroup25.s3-website-us-east-1.amazonaws.com');
+        console.log('Usuario autenticado:', req.user); // Verifica el usuario autenticado
+        req.session.user = req.user;
+        res.redirect('http://eternalgraphicsgroup25.s3-website-us-east-1.amazonaws.com');
     });
-  
-  app.get('/', (req, res) => {
+
+app.get('/', (req, res) => {
     console.log('Sesión:', req.session); // Verifica la sesión
     if (req.session.user) {
-      res.send(`Bienvenido, ${req.session.user.displayName}!`);
+        res.send(`Bienvenido, ${req.session.user.displayName}!`);
     } else {
-      res.send('No estás autenticado.');
+        res.send('No estás autenticado.');
     }
-  });
+});
 
 // Inicia el servidor
 const PORT = process.env.PORT || 1028;
