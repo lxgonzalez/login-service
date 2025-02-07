@@ -28,7 +28,7 @@ app.use(session({
       httpOnly: true,
       secure: false, // Cambia a `true` si estás usando HTTPS
       sameSite: 'none', // Permite que las cookies se envíen en solicitudes entre dominios
-      domain: '.amazonaws.com', // Cambia esto por tu dominio (por ejemplo, '.example.com')
+      domain: '.us-east-1.elb.amazonaws.com', // Dominio del backend
     },
   }));
 
