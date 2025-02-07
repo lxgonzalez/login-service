@@ -6,6 +6,18 @@ require('dotenv').config();
 
 const app = express();
 const API_GATEWAY = process.env.API_GATEWAY;
+const allowedOrigins = ['http://localhost:5173', 'http://eternalgraphicsgroup25.s3-website-us-east-1.amazonaws.com'];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Origen no permitido por CORS'));
+        }
+    },
+    credentials: true,
+}));
 // Configuración de sesión
 app.use(session({
     secret: process.env.SESSION_SECRET,
