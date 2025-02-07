@@ -43,7 +43,7 @@ app.get('/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 // Ruta de callback después de la autenticación
-app.get('/auth/google/callback',
+app.get('/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),
   (req, res) => {
     // Redirige al usuario a la página de inicio o dashboard
