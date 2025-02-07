@@ -40,11 +40,7 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE_LOGIN}}:latest
             docker stop ${{secrets.DOCKER_IMAGE_LOGIN}}|| true
             docker rm ${{secrets.DOCKER_IMAGE_LOGIN}} || true
-            docker run --restart always -e GOOGLE_CLIENT_ID=${{secrets.GOOGLE_CLIENT_ID}} \
-                       -e GOOGLE_CLIENT_SECRET=${{secrets.GOOGLE_CLIENT_SECRET}} \
-                       -e BROKER_URL=${{secrets.BROKER_URL}} \
-                       -e FRONTEND_URL=${{secrets.FRONTEND_URL}} \
-                       -e SESSION_SECRET=${{secrets.SESSION_SECRET}} \
-                       -e API_GATEWAY=${{secrets.API_GATEWAY}} \
+            docker run --restart always -e COUCHDB_URL=${{secrets.COUCHDB_URL}} \
+                       -e COUGHTDB_DB_NAME=${{secrets.COUGHTDB_DB_NAME}} \
                        -d --name ${{secrets.DOCKER_IMAGE_LOGIN}} \
                        -p 1028:1028 ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_IMAGE_LOGIN}}:latest
