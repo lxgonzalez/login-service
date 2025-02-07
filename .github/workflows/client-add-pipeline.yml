@@ -44,7 +44,7 @@ jobs:
                        -e GOOGLE_CLIENT_SECRET=${{secrets.GOOGLE_CLIENT_SECRET}} \
                        -e BROKER_URL=${{secrets.BROKER_URL}} \
                        -e FRONTEND_URL=${{secrets.FRONTEND_URL}} \
-                       -e SESSION_SECRET=${{secrets.CLIENT_USESSION_SECRETRL}} \
+                       -e SESSION_SECRET=${{secrets.SESSION_SECRET}} \
                        -e API_GATEWAY=${{secrets.API_GATEWAY}} \
                        -d --name ${{secrets.DOCKER_IMAGE_LOGIN}} \
                        -p 1028:1028 ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_IMAGE_LOGIN}}:latest
