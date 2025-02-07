@@ -60,7 +60,7 @@ app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
         // Redirige al usuario a la página de inicio o dashboard
-        res.redirect('http://localhost:5173');
+        res.redirect('http://eternalgraphicsgroup25.s3-website-us-east-1.amazonaws.com');
     });
 
 // Ruta de inicio
