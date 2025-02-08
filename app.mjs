@@ -5,7 +5,6 @@ import { validateEmailCode } from './src/controllers/validationController.mjs';
 import { registerUser } from './src/controllers/registerController.mjs';
 
 const app = express();
-const port = 3000;
 
 app.use(cors());
 app.use(express.json());
