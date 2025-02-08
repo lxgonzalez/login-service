@@ -41,6 +41,9 @@ jobs:
             docker stop ${{secrets.DOCKER_IMAGE_LOGIN}}|| true
             docker rm ${{secrets.DOCKER_IMAGE_LOGIN}} || true
             docker run --restart always -e COUCHDB_URL=${{secrets.COUCHDB_URL}} \
-                       -e COUGHTDB_DB_NAME=${{secrets.COUGHTDB_DB_NAME}} \
+                       -e COUCHDB_DB_NAME=${{secrets.COUCHDB_DB_NAME}} \
+                       -e API_GATEWAY_URL=${{secrets.API_GATEWAY_URL}} \
+                       -e BROKER_URL=${{secrets.BROKER_URL}} \
+                       -e PORT=${{secrets.PORT}} \
                        -d --name ${{secrets.DOCKER_IMAGE_LOGIN}} \
-                       -p 1028:1028 ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_IMAGE_LOGIN}}:latest
+                       -p ${{secrets.PORT}}:${{secrets.PORT}} ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_IMAGE_LOGIN}}:latest
