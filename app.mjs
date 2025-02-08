@@ -17,5 +17,4 @@ app.get('/', (req, res) => {
     res.status(200).json({ status: 'OK', message: 'Register Microservice is running ...' });
 });
 
-
 export default app;

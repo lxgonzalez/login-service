@@ -12,7 +12,7 @@ export const sendEmailCode = async (req, res) => {
   }
   const emailValidation = await validateRegistrationEmail(email);
   if (emailValidation) {
-    return { valid: false, message: 'Email is already registered.' };
+    return res.status(200).json({ valid: false, message: 'Email is already registered.' });
   }
 
   try {
