@@ -13,4 +13,9 @@ app.post('/send-email', sendEmailCode);
 app.post('/validate-code', validateEmailCode);
 app.post('/register-user', registerUser);
 
+app.get('/', (req, res) => {
+    res.status(200).json({ status: 'OK', message: 'Register Microservice is running ...' });
+});
+
+
 export default app;
