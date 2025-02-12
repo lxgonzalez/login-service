@@ -1,0 +1,49 @@
+name: Pipeline for Login Microservice
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: 
+      - main
+jobs:
+  build-and-push-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE_LOGIN}}:latest .
+
+      - name: Push Docker image to Dockerhub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE_LOGIN}}:latest
+
+  deploy-to-ec2-instance:
+    needs: build-and-push-docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST_MAIN }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            echo "Pull, stop, and redeploy the Docker container"
+            docker pull ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE_LOGIN}}:latest
+            docker stop ${{secrets.DOCKER_IMAGE_LOGIN}} || true
+            docker rm ${{secrets.DOCKER_IMAGE_LOGIN}} || true
+            docker run --restart always -e COUCHDB_URL=${{secrets.COUCHDB_URL}} \
+                       -e COUCHDB_DB_NAME=${{secrets.COUCHDB_DB_NAME}} \
+                       -e API_GATEWAY_URL=${{secrets.API_GATEWAY_URL}} \
+                       -e BROKER_URL=${{secrets.BROKER_URL}} \
+                       -e PORT=${{secrets.PORT}} \
+                       -d --name ${{secrets.DOCKER_IMAGE_LOGIN}} \
+                       -p ${{secrets.PORT}}:${{secrets.PORT}} ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_IMAGE_LOGIN}}:latest
