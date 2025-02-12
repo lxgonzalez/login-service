@@ -1,8 +1,7 @@
 import db from '../config/couchdb.js';
-import { nanoid } from 'nanoid';
 
 export const generateAndStoreVerificationCode = async (email) => {
-  const code = nanoid(6); // Generate a unique 6-character code
+  const code = Math.floor(100000 + Math.random() * 900000).toString(); 
   const timestamp = new Date().toISOString();
 
   try {
